@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
@@ -41,6 +42,17 @@ public class AccountController {
         return ResponseEntity.ok(accounts.stream()
                 .map(this.accountMapper::mapTo)
                 .collect(Collectors.toList()));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<AccountDto> getAccount(@PathVariable("id") String id){
+
+        if(!this.accountService.isPresent(id)){
+            return ResponseEntity.notFound().build();
+        }
+        Account account = this.accountService.getAccount(UUID.fromString(id));
+
+        return ResponseEntity.ok(this.accountMapper.mapTo(account));
     }
 
     @PostMapping("/{id}/deposit")
